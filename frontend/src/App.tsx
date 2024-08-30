@@ -3,6 +3,7 @@ import "antd/dist/reset.css";
 import { useEffect, useState } from "react";
 import { deleteIssue, getAllIssues, Issue } from "./helpers/issues";
 import AddEditIssueModal from "./AddEditIssue";
+import { DeleteFilled, EditFilled } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -29,6 +30,11 @@ function App() {
     fetchIssues();
   }, []);
 
+  const dismissModal = () => {
+    setIssueOnEdit(null);
+    setShowModal(false);
+  };
+
   const handleDelete = (issue: Issue) => {
     Modal.confirm({
       title: `Are you sure you want to delete: ${issue.title}`,
@@ -43,7 +49,7 @@ function App() {
         notification.success({
           message: "Issue deleted",
         });
-        fetchIssues()
+        fetchIssues();
       },
     });
   };
@@ -64,17 +70,18 @@ function App() {
       dataIndex: "id",
       key: "id",
       render: (_: unknown, record: Issue) => (
-        <div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <Button
             onClick={() => {
               setIssueOnEdit(record);
               setShowModal(true);
             }}
+            type="primary"
           >
-            Update
+            <EditFilled />
           </Button>
           <Button danger onClick={() => handleDelete(record)}>
-            Delete
+            <DeleteFilled />
           </Button>
         </div>
       ),
@@ -106,7 +113,7 @@ function App() {
         <AddEditIssueModal
           issueOnEdit={issueOnEdit}
           visible={showModal}
-          dismiss={() => setShowModal(false)}
+          dismiss={dismissModal}
           refresh={fetchIssues}
         />
       </Content>
