@@ -1,0 +1,14 @@
+# app.yaml
+
+# service: exercises
+runtime: nodejs18
+
+instance_class: F1
+automatic_scaling:
+  max_instances: 10
+  min_instances: 1
+
+env_variables:
+  CORS_URL: "*"
+
+entrypoint: "node build/src/server.js"
