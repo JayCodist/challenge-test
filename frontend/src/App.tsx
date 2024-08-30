@@ -1,7 +1,7 @@
 import { Button, Layout, Table, Modal, notification } from "antd";
 import "antd/dist/reset.css";
 import { useEffect, useState } from "react";
-import { getAllIssues, Issue } from "./helpers/issues";
+import { deleteIssue, getAllIssues, Issue } from "./helpers/issues";
 import AddEditIssueModal from "./AddEditIssue";
 
 const { Content } = Layout;
@@ -10,7 +10,7 @@ function App() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [issueOnEdit, setIssueOnEdit] = useState<Issue | null>(null)
+  const [issueOnEdit, setIssueOnEdit] = useState<Issue | null>(null);
 
   const fetchIssues = async () => {
     setLoading(true);
@@ -29,6 +29,25 @@ function App() {
     fetchIssues();
   }, []);
 
+  const handleDelete = (issue: Issue) => {
+    Modal.confirm({
+      title: `Are you sure you want to delete: ${issue.title}`,
+      onOk: async () => {
+        const { error, message } = await deleteIssue(issue.id);
+        if (error) {
+          notification.error({
+            message: `Unable to delete issue: ${message}`,
+          });
+          return;
+        }
+        notification.success({
+          message: "Issue deleted",
+        });
+        fetchIssues()
+      },
+    });
+  };
+
   const columns = [
     {
       title: "Title",
@@ -44,11 +63,22 @@ function App() {
       title: "",
       dataIndex: "id",
       key: "id",
-      render: (_: unknown, record: Issue) => <div>
-        <Button>Update</Button>
-        <Button danger>Delete</Button>
-      </div>
-    }
+      render: (_: unknown, record: Issue) => (
+        <div>
+          <Button
+            onClick={() => {
+              setIssueOnEdit(record);
+              setShowModal(true);
+            }}
+          >
+            Update
+          </Button>
+          <Button danger onClick={() => handleDelete(record)}>
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -62,7 +92,9 @@ function App() {
             margin: "1rem 0",
           }}
         >
-          <Button type="primary" onClick={() => setShowModal(true)}>New Issue</Button>
+          <Button type="primary" onClick={() => setShowModal(true)}>
+            New Issue
+          </Button>
         </div>
         <Table
           dataSource={issues}
