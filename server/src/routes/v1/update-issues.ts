@@ -7,7 +7,7 @@ import { ApiError } from "../../core/ApiError";
 const updateIssue = express.Router();
 
 updateIssue.put(
-  "/update/:id",
+  "/:id",
   handleFormDataParsing(),
   async (req, res) => {
     try {

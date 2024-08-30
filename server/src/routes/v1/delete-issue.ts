@@ -6,7 +6,7 @@ import { ApiError } from "../../core/ApiError";
 const deleteIssue = express.Router();
 
 deleteIssue.delete(
-  "/delete/:id",
+  "/:id",
   async (req, res) => {
     try {
       const response = await IssuesRepo.delete(req.params.id);

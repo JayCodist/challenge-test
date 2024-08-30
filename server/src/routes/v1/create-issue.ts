@@ -7,7 +7,7 @@ import { ApiError } from "../../core/ApiError";
 const createIssue = express.Router();
 
 createIssue.post(
-  "/create",
+  "/",
   handleFormDataParsing(),
   async (req, res) => {
     try {
